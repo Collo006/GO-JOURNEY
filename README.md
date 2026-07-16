@@ -20,3 +20,21 @@
 ## HANDLER TO RETURN A SPECIFIC ITEM
 - Add logic to retrieve requested album
 - Map the path to the logic
+
+# GO WEB APPLICATIONS
+## Introducing the net/http package
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "HI there, I love %s!", r.URL.Path[1:])
+}
+
+func main(){
+    http.HandleFunc("/",handler)
+    log.Fatal(http.ListenAndServe(":8080",nil))
+}
+- the main function calls to http.HandleFunc, which tells net/http to handle all requests to the root
+- it then calls http.ListenAndServe, specifying that it should listen on port 8080
+- ListenAndServe only returns an error(when an unexpected error occurs). in order to log that error we wrap it in log.Fatal
+- w, http.ResponseWRiter it assembles the HTTP server's response: by writing to it, send data to the HTTP client
+- r *http.Request is a data structure that represents the client HTTP request. r.URL.Path is the oath component of the request URL. 
+- [1:] means create a sub-slice of Path from the 1st character to the end. this drops the leading "/" from the path name
