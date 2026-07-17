@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"log"
+	"net/http"
 )
 
 // Data Structures: in the struct we define it with 2 fields which rep the title and body: Describes how page data will be stored in memory
@@ -29,9 +31,20 @@ func loadPage(title string) (*Page, error) {
 	// intializes the Page struct
 	return &Page{Title: title, Body: body}, nil
 }
+
+// Using net/http to serve wiki pages
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/view/"):]
+	p, _ := loadPage(title)
+	fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
+}
+
 func main() {
-	p1 := &Page{Title: "TestPage", Body: []byte("This is a sample Page.")}
-	p1.save()
-	p2, _ := loadPage("TestPage")
-	fmt.Println(string(p2.Body))
+	//p1 := &Page{Title: "TestPage", Body: []byte("This is a sample Page.")}
+	//p1.save()
+	//p2, _ := loadPage("TestPage")
+	//fmt.Println(string(p2.Body))
+	http.HandleFunc("/view/", viewHandler)
+	fmt.Println("Port is running in port 8080")
+	log.Fatal(http.ListenAndServe(":8080",nil))
 }
