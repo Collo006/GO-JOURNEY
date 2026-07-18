@@ -88,4 +88,14 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 ## Validation
 - regexp.MustCompile will parse and compile the regular expression and return a regexp. 
 - regexp.MustCompile is different from Compile in that it will panic if the expression compilation fails, while Compile returns an error as a second parameter.
-- if the title is valid, it will be returned along with a nil error value. If the title is invalid, the function will write a "404 Not Found" error to the HTTP connection and return an error to the handler. 
+- if the title is valid, it will be returned along with a nil error value. If the title is invalid, the function will write a "404 Not Found" error to the HTTP connection and return an error to the handler.
+
+## Introducing Function Literals and 
+- func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.HandleFunc {
+     // here we will extract the page title from the request,
+     // and call the provided handler "fn"
+}
+- the returned function is called a closure beacuse it encloses values defined outside of it. variabe fn is enclosed by the closure. "fn" will be one of our save, edit or view handlers.
+- the above closure returned by makeHandler is a function that takes an http.ResponseWriter and http.Request(http.HandlerFunc).
+- it extracts the title from the request path and validates it with the validPath regexp .
+- now we reomve the calls to getTitle from the handler fucntions since it is being done in the makeHandler
