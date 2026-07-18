@@ -8,12 +8,14 @@ import (
 	"html/template"
 	"regexp"
 	"errors"
+	"strings"
 )
 
 // Data Structures: in the struct we define it with 2 fields which rep the title and body: Describes how page data will be stored in memory
 type Page struct {
 	Title string
 	Body []byte
+	HTMLBody template.HTML
 }
 
 
@@ -41,6 +43,21 @@ var templates = template.Must(template.ParseFiles("tmpl/edit.html","tmpl/view.ht
 
 //global variable to store our validation expression
 var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
+var wikiLink = regexp.MustCompile("\\[[a-zA-Z0-9]+\\]")
+
+func convertLInks(body []byte) []byte {
+	return wikiLink.ReplaceAllFunc(body, func(match []byte) []byte {
+
+		//convert []byte to string
+		pageName := strings.Trim(string(match), "[]")
+
+		//build html link
+		link := "<a href=\"/view/" + pageName + "\">" + pageName + "</a>"
+
+		//convert back to []byte
+		return []byte(link)
+	})
+}
 
 //validate path and extract page title
 func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
@@ -87,6 +104,8 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		http.Redirect(w, r, "/edit/"+ title, http.StatusFound)
 		return
 	}
+
+	p.HTMLBody =template.HTML(convertLInks(p.Body))
 	//fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
 	renderTemplate(w, "view", p)
 }
