@@ -50,6 +50,11 @@ func main(){
 http.Error func sends a speficied HTTP repsonse code (Internal Server Error) and an error message
 - we re-use the variable err:  The same err variable is reused for each operation because each error is checked and handled before moving on. It's one of the most common idioms you'll encounter in Go programs.
 
+## Saving Pages
+- The page title (provided in the URL) and the form's only field, Body, are stored in a new Page. The save() method is then called to write the data to a file, and the client is redirected to the /view/ page.
+
+- The value returned by FormValue is of type string. We must convert that value to []byte before it will fit into the Page struct. We use []byte(body) to perform the conversion.
+
 ## Template Caching
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
     t, err := template.ParseFiles(tmpl + ".html")
@@ -63,7 +68,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
     }
 }
 - var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
-- Above is a better approach beacusew we call ParseFiles once at program initialization the latter would call everytime we need it
+- Above is a better approach beacuse we call ParseFiles once at program initialization the latter would call everytime we need it
 - func template.Must is a convenience wrapper that panics when passed a non-nil error value and otherwise returns the *TEmplate unaltered
 - A panic is Go's way of saying:
 - "Something has gone so seriously wrong that this program cannot continue."
@@ -79,3 +84,8 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 - Calls os.Exit(1).
 - Does not print a stack trace.
 - Cannot be recovered.
+
+## Validation
+- regexp.MustCompile will parse and compile the regular expression and return a regexp. 
+- regexp.MustCompile is different from Compile in that it will panic if the expression compilation fails, while Compile returns an error as a second parameter.
+- if the title is valid, it will be returned along with a nil error value. If the title is invalid, the function will write a "404 Not Found" error to the HTTP connection and return an error to the handler. 
