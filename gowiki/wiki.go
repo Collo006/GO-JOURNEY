@@ -22,12 +22,12 @@ type Page struct {
 //it will save the pages body as a text and use the title as the filename
 //octal integer literal 0600 indicates that the file should be created with read-write permissions for the current user only
 func (p *Page) save() error{
-	filename := p.Title + ".txt"
+	filename := "data/" + p.Title + ".txt"
 	return os.WriteFile(filename, p.Body, 0600)
 }
 //now let us load the pages
 func loadPage(title string) (*Page, error) {
-	filename :=title + ".txt"
+	filename :="data/"+ title + ".txt"
 	body,err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func loadPage(title string) (*Page, error) {
 }
 
 //Template Caching
-var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+var templates = template.Must(template.ParseFiles("tmpl/edit.html","tmpl/view.html"))
 
 //global variable to store our validation expression
 var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
@@ -91,6 +91,17 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	renderTemplate(w, "view", p)
 }
 
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	
+	if r.URL.Path != "/" {
+		http.NotFound(w,r)
+		return
+	}
+
+	http.Redirect(w, r, "/view/FrontPage", http.StatusFound )
+	
+	
+}
 
 func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 	fmt.Println("editHandler called!")
@@ -102,6 +113,7 @@ func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 	}
 	renderTemplate(w, "edit", p)
 }
+
 
 
 // this save function is used to handle the submit button
@@ -126,6 +138,7 @@ func main() {
 	http.HandleFunc("/view/", makeHandler(viewHandler))//now we wrap the handler functions ith MakeHandler in main, before they are registered with the http package.
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.HandleFunc("/save/",makeHandler(saveHandler))
+	http.HandleFunc("/",rootHandler)
 	fmt.Println("Port is running in port 8080")
 	log.Fatal(http.ListenAndServe(":8080",nil))
 }
