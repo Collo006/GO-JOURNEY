@@ -99,3 +99,17 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 - the above closure returned by makeHandler is a function that takes an http.ResponseWriter and http.Request(http.HandlerFunc).
 - it extracts the title from the request path and validates it with the validPath regexp .
 - now we reomve the calls to getTitle from the handler fucntions since it is being done in the makeHandler
+
+## REGEX 
+- "\\[[a-zA-Z0-9]+\\]"
+- Adding \ tells regex:
+
+"No, I mean the actual character '['."
+
+Likewise:
+
+\]
+
+means
+
+"the actual ]"
