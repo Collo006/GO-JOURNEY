@@ -113,3 +113,58 @@ Likewise:
 means
 
 "the actual ]"
+
+# ACCESSING RELATIONAL DATABASE
+### How to create MariaDB
+- sudo apt update
+- sudo apt install mariadb-server -y
+- sudo service mariadb start
+- mysql -u root
+
+### Restart MariaDB
+- sudo service mysql stop
+- sudo mysqld-safe --skip-grant-tables --skip-networking &
+
+## How to check if table is working
+- run the script to the path source /path/to/create-tables.sql
+- select * from album;
+
+## Find and Import a database driver
+- In your browser, visit the SQLDrivers wiki page to identify a driver you can use.
+- Use the list on the page to identify the driver you’ll use. For accessing MySQL in this tutorial, you’ll use Go-MySQL-Driver.
+- Note the package name for the driver – here, github.com/go-sql-driver/mysql.
+
+###  Get a databse handle and connect
+- Declare a db variable of type *sql.DB. This is your database handle.
+- Making db a global variable simplifies this example. In production, you’d avoid the global variable, such as by passing the variable to functions that need it or by wrapping it in a struct.
+- Use the MySQL driver’s Config – and the type’s FormatDSN -– to collect connection  properties and format them into a DSN for a connection string.
+
+- The Config struct makes for code that’s easier to read than a connection string would be.
+
+-Call sql.Open to initialize the db variable, passing the return value of FormatDSN.
+
+- Check for an error from sql.Open. It could fail if, for example, your database connection specifics weren’t well-formed.
+
+- To simplify the code, you’re calling log.Fatal to end execution and print the error to the console. In production code, you’ll want to handle errors in a more graceful way.
+
+- Call DB.Ping to confirm that connecting to the database works. At run time, sql.Open might not immediately connect, depending on the driver. You’re using Ping here to confirm that the database/sql package can connect when it needs to.
+
+- Check for an error from Ping, in case the connection failed.
+
+- Print a message if Ping connects successfully.
+
+### how to create user password and user name
+- sudo mysql -u root
+
+- sql-- 1. Create the user for local connections
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+
+-- 2. Give the new user access to your database (e.g., recordings)
+GRANT ALL PRIVILEGES ON recordings.* TO 'username'@'localhost';
+
+-- 3. Save changes and exit
+FLUSH PRIVILEGES;
+EXIT;
+
+### Query for multiple rows
+- in the func albumsByArtist
