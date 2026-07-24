@@ -167,4 +167,12 @@ FLUSH PRIVILEGES;
 EXIT;
 
 ### Query for multiple rows
-- in the func albumsByArtist
+- in the func albumsByArtist it creates an empty slice
+- sends a SQL query to the db
+- reads very row returned
+- converts each row into an Album struct
+- retunrs the completed slice
+- Query() is used when you expect multiple rows
+- QueryRow() is used for one expected row
+- rows.Scan() transfers data from the current db row into the struct. the &alb is used to detec the adressess of the variables so it can write values into them.
+- rows.Err() is used to check if there are any other errors during the iteration not during the initial query or the individual Scan() calls

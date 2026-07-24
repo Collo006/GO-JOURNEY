@@ -44,7 +44,7 @@ func main() {
 	}
 	fmt.Println("Connected!")
 
-	albums, err := albumsByArtist("John Coltrane")
+	albums, err := albumsByArtist("Gerry Mulligan")
 if err != nil {
     log.Fatal(err)
 }
@@ -63,6 +63,7 @@ func albumsByArtist(name string) ([]Album, error) {
 	defer rows.Close()
 	//loop through rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
+		//every iteration returns one empty album
 		var alb Album
 		if err := rows.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err !=nil {
 			return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
